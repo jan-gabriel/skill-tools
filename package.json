@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "zod": "^3.22.4"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
