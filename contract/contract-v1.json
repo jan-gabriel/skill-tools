@@ -1,0 +1,144 @@
+{
+    "$comment": "Shared MCP contract fixture (single authored source, shipped in the pinned skill-tools release). Both consumers assert against this file at the tag they depend on: auto-discover-mcp (server implementation) and agent-skill-corpus (published site copy). Bump contract_version only with a release per MCP-GAP \u00a75.7.",
+    "contract_version": "1.0.0",
+    "identity": {
+        "canonical": "domain/name",
+        "numeric_alias": "deprecated, removed after one beta window (M2-09)"
+    },
+    "tools": {
+        "search_skills": {
+            "inputs": [
+                "query",
+                "top_k",
+                "domain",
+                "tags",
+                "tier",
+                "review_status",
+                "cursor",
+                "token",
+                "include_unsafe"
+            ],
+            "result_envelope": [
+                "id",
+                "numeric_id",
+                "version",
+                "content_hash",
+                "last_verified",
+                "security",
+                "deprecated",
+                "supersedes"
+            ],
+            "page_fields": [
+                "results",
+                "total",
+                "next_cursor"
+            ]
+        },
+        "get_skill": {
+            "inputs": [
+                "id",
+                "version",
+                "token",
+                "target",
+                "include_unsafe"
+            ],
+            "result_envelope": [
+                "id",
+                "numeric_id",
+                "version",
+                "content_hash",
+                "last_verified",
+                "security",
+                "deprecated",
+                "supersedes"
+            ],
+            "payload_fields": [
+                "body",
+                "manifest",
+                "install_hint",
+                "install_target"
+            ]
+        },
+        "get_skill_resource": {
+            "inputs": [
+                "id",
+                "path",
+                "token"
+            ]
+        },
+        "list_domains": {
+            "inputs": []
+        },
+        "get_versions": {
+            "inputs": [],
+            "required_fields": [
+                "server_version",
+                "contract_version",
+                "corpus_version",
+                "corpus_commit",
+                "schema_versions",
+                "protocol_revisions"
+            ]
+        },
+        "register": {
+            "inputs": [
+                "agent_id",
+                "owner"
+            ]
+        },
+        "request_extension": {
+            "inputs": [
+                "token",
+                "reason"
+            ]
+        },
+        "propose_skill": {
+            "inputs": [
+                "name",
+                "body",
+                "domain",
+                "description",
+                "tags",
+                "requires",
+                "version",
+                "reason"
+            ]
+        },
+        "report_skill_outcome": {
+            "inputs": [
+                "skill_id",
+                "outcome",
+                "issue"
+            ]
+        },
+        "report_skill_issue": {
+            "inputs": [
+                "skill_id",
+                "concern",
+                "details",
+                "token"
+            ]
+        }
+    },
+    "error_codes": [
+        "not_found",
+        "body_withheld",
+        "version_unavailable",
+        "invalid_argument",
+        "unauthenticated",
+        "forbidden",
+        "rate_limited",
+        "internal"
+    ],
+    "gate": {
+        "served_review_status": "approved",
+        "public_true_is_not_a_gate": true
+    },
+    "content_hash": {
+        "manifest": "<relative-path>\\0<file-sha256>\\n",
+        "order": "ascending UTF-8 byte order of the relative path",
+        "line_endings": "CRLF normalised to LF before hashing",
+        "scope": "SKILL.md plus every companion file, no exclusions \u2014 dotfiles count, so a bundle with a dotfile hashes differently",
+        "prefix": "sha256:"
+    }
+}

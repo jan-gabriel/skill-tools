@@ -1,10 +1,14 @@
 {
   "name": "skill-tools",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "SKILL.md contract + tooling: schema, security scanner, ingest, validate, review CLIs",
   "type": "module",
-  "engines": { "node": ">=20" },
-  "bin": { "skill-tools": "dist/cli/main.js" },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "skill-tools": "dist/cli/main.js"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -21,5 +25,10 @@
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "vitest": "^1.6.0"
-  }
+  },
+  "files": [
+    "dist",
+    "contract",
+    "README.md"
+  ]
 }

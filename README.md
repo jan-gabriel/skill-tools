@@ -91,6 +91,30 @@ score = max(0, 100 − (CRIT×20 + HIGH×10 + MED×3 + LOW×1))
 
 `generateBM25Embedding(text)` produces a deterministic 384-dimension sparse embedding (djb2-hashed term frequencies, L2-normalised). No model download required; used by `review` for near-duplicate detection.
 
+### Shared MCP contract fixture
+
+`contract/contract-v1.json` is the single authored description of the MCP contract
+(tool names and inputs, the trust envelope, error codes, the publication gate, and
+the `content_hash` rules). It ships with this package so both consumers can assert
+against the **same file at the same tag** instead of keeping private copies:
+
+- `auto-discover-mcp` asserts the server implements it
+  (`packages/discovery/tests/contract/contract-v1.test.ts`);
+- `agent-skill-corpus` asserts its published site copy matches it
+  (`site/src/lib/mcp-contract.test.ts` and the post-build contract gate).
+
+Resolve it from a dependency rather than copying it:
+
+```js
+const fixture = JSON.parse(readFileSync(
+  createRequire(import.meta.url).resolve("skill-tools/contract/contract-v1.json"),
+  "utf-8",
+));
+```
+
+Bump `contract_version` inside the fixture only alongside a release, per the
+N/N-1 compatibility policy.
+
 ## Development
 
 ```bash
