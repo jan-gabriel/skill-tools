@@ -68,6 +68,81 @@ describe("validateSkill", () => {
     });
 });
 
+describe("last_verified", () => {
+    it("rejects approved skill without last_verified", () => {
+        const r = validateSkill({ ...VALID_FM, review_status: "approved" }, VALID_BODY);
+        expect(r.valid).toBe(false);
+        if (!r.valid) {
+            expect(r.errors.join(" ")).toMatch(/last_verified/);
+        }
+    });
+
+    it("accepts approved skill with valid last_verified", () => {
+        const r = validateSkill(
+            { ...VALID_FM, review_status: "approved", last_verified: "2026-11-04" },
+            VALID_BODY,
+        );
+        expect(r.valid).toBe(true);
+        if (r.valid) expect(r.data.last_verified).toBe("2026-11-04");
+    });
+
+    it("accepts pending skill without last_verified", () => {
+        const r = validateSkill({ ...VALID_FM, review_status: "pending" }, VALID_BODY);
+        expect(r.valid).toBe(true);
+    });
+
+    it("accepts pending skill that already carries a valid last_verified", () => {
+        const r = validateSkill(
+            { ...VALID_FM, review_status: "pending", last_verified: "2026-11-04" },
+            VALID_BODY,
+        );
+        expect(r.valid).toBe(true);
+    });
+
+    it("rejects non-ISO format", () => {
+        for (const bad of ["2026/11/04", "2026-11-4", "Nov 4 2026", "2026-13-01", ""]) {
+            const r = validateSkill(
+                { ...VALID_FM, review_status: "approved", last_verified: bad },
+                VALID_BODY,
+            );
+            expect(r.valid).toBe(false);
+        }
+    });
+
+    it("rejects fake calendar dates", () => {
+        for (const bad of ["2026-02-30", "2026-00-10", "2026-04-31"]) {
+            const r = validateSkill(
+                { ...VALID_FM, review_status: "approved", last_verified: bad },
+                VALID_BODY,
+            );
+            expect(r.valid).toBe(false);
+        }
+    });
+
+    it("rejects approved skill with invalid type", () => {
+        const r = validateSkill(
+            { ...VALID_FM, review_status: "approved", last_verified: 20261104 },
+            VALID_BODY,
+        );
+        expect(r.valid).toBe(false);
+    });
+
+    it("exposes last_verified through the inferred parse result", () => {
+        const r = SkillFrontmatterSchema.safeParse({
+            ...VALID_FM,
+            review_status: "approved",
+            last_verified: "2026-01-31",
+        });
+        expect(r.success).toBe(true);
+        if (r.success) expect(r.data.last_verified).toBe("2026-01-31");
+    });
+
+    it("direct schema parse without approval does not require the field", () => {
+        const r = SkillFrontmatterSchema.safeParse(VALID_FM);
+        expect(r.success).toBe(true);
+    });
+});
+
 describe("validateNameFolderMatch", () => {
     it("returns true when names match exactly", () => {
         expect(validateNameFolderMatch("web-researcher-pro", "web-researcher-pro")).toBe(true);

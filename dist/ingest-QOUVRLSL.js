@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import {
   ingestDirectory
-} from "./chunk-W7VU6TBF.js";
-import "./chunk-3CIKDMUS.js";
+} from "./chunk-ZGGUCPXM.js";
+import "./chunk-754DTTSW.js";
 
 // src/cli/ingest.ts
 import path from "path";

@@ -1,6 +1,7 @@
 import {
+  LastVerifiedSchema,
   validateSkill
-} from "./chunk-3CIKDMUS.js";
+} from "./chunk-754DTTSW.js";
 
 // src/ingest.ts
 import matter from "gray-matter";
@@ -513,6 +514,14 @@ async function buildFrontmatter(filePath, fm, body, source, sourceFolder) {
   const tags = deriveTags(fm, body, name);
   const requires = preserveRequires(fm, body);
   const version = preserveVersion(fm);
+  let lastVerified;
+  if (typeof fm.last_verified === "string") {
+    if (LastVerifiedSchema.safeParse(fm.last_verified).success) {
+      lastVerified = fm.last_verified;
+    } else {
+      warnings.push("last_verified not preserved \u2014 must be an ISO date (YYYY-MM-DD)");
+    }
+  }
   const frontmatter = {
     name,
     description,
@@ -522,7 +531,8 @@ async function buildFrontmatter(filePath, fm, body, source, sourceFolder) {
     requires,
     version,
     source,
-    review_status: "pending"
+    review_status: "pending",
+    ...lastVerified !== void 0 ? { last_verified: lastVerified } : {}
   };
   const validation = validateSkill(frontmatter, body);
   if (!validation.valid) {

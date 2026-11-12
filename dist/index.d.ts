@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+/** True for real calendar dates in YYYY-MM-DD form (rejects e.g. 2026-02-30). */
+declare function isValidIsoDate(value: string): boolean;
+declare const LastVerifiedSchema: z.ZodString;
 declare const SkillRequiresSchema: z.ZodObject<{
     mcp_servers: z.ZodDefault<z.ZodArray<z.ZodString>>;
     tools: z.ZodDefault<z.ZodArray<z.ZodString>>;
@@ -28,6 +31,7 @@ declare const SkillFrontmatterSchema: z.ZodObject<{
         pending: "pending";
         approved: "approved";
     }>>;
+    last_verified: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 type SkillFrontmatter = z.infer<typeof SkillFrontmatterSchema>;
 type SkillRequires = z.infer<typeof SkillRequiresSchema>;
@@ -134,4 +138,4 @@ declare function skillExists(outputPath: string): boolean;
 declare const EMBEDDING_DIMS = 384;
 declare function generateBM25Embedding(text: string): Float32Array;
 
-export { EMBEDDING_DIMS, type IngestOptions, type IngestedSkill, type SecurityFinding, type SecurityScanResult, type SecurityTier, type Severity, type SkillFileContent, type SkillFrontmatter, SkillFrontmatterSchema, type SkillRequires, SkillRequiresSchema, type SkillSource, SkillSourceSchema, type ValidationResult, classifyTier, deriveDescription, deriveDomain, deriveRequires, deriveTags, generateBM25Embedding, ingestDirectory, ingestFile, ingestSkillDirectory, scanSecurity, scanSecurityFiles, sha256, skillExists, validateNameFolderMatch, validateSkill };
+export { EMBEDDING_DIMS, type IngestOptions, type IngestedSkill, LastVerifiedSchema, type SecurityFinding, type SecurityScanResult, type SecurityTier, type Severity, type SkillFileContent, type SkillFrontmatter, SkillFrontmatterSchema, type SkillRequires, SkillRequiresSchema, type SkillSource, SkillSourceSchema, type ValidationResult, classifyTier, deriveDescription, deriveDomain, deriveRequires, deriveTags, generateBM25Embedding, ingestDirectory, ingestFile, ingestSkillDirectory, isValidIsoDate, scanSecurity, scanSecurityFiles, sha256, skillExists, validateNameFolderMatch, validateSkill };

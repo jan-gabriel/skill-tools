@@ -16,10 +16,10 @@ Commands:
 process.argv.splice(2, 1);
 switch (command) {
   case "validate":
-    await import("../validate-3SSX6IC7.js");
+    await import("../validate-ALC5DP46.js");
     break;
   case "ingest":
-    await import("../ingest-IAMEGDGW.js");
+    await import("../ingest-QOUVRLSL.js");
     break;
   case "scan-scores":
     await import("../scan-scores-IS2N7RPG.js");

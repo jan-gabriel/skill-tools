@@ -4,7 +4,7 @@ import { writeFile, mkdir, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import matter from "gray-matter";
-import { ingestFile, ingestDirectory } from "../src/ingest.js";
+import { ingestFile, ingestDirectory, ingestSkillDirectory } from "../src/ingest.js";
 
 let tmpDir: string;
 
@@ -155,6 +155,46 @@ describe("description derivation", () => {
         const desc = result.frontmatter.description;
         expect(desc.length).toBeLessThanOrEqual(200);
         expect(desc).not.toMatch(/B/);
+    });
+});
+
+describe("ingestSkillDirectory", () => {
+    it("preserves last_verified through a directory round-trip", async () => {
+        const dir = path.join(tmpDir, "source", "web-researcher-pro");
+        await mkdir(dir, { recursive: true });
+        const content = matter.stringify(WEB_RESEARCHER_BODY, {
+            name: "web-researcher-pro",
+            description: "Performs deep web research with source credibility assessment.",
+            domain: "research",
+            review_status: "approved",
+            last_verified: "2026-11-04",
+        });
+        await writeFile(path.join(dir, "SKILL.md"), content, "utf-8");
+        await mkdir(path.join(dir, "references"), { recursive: true });
+        await writeFile(path.join(dir, "references", "sources.md"), "# Sources", "utf-8");
+
+        const result = await ingestSkillDirectory(dir, {
+            skillsRoot: tmpDir,
+            dryRun: false,
+        });
+        expect(result.frontmatter.last_verified).toBe("2026-11-04");
+
+        const raw = await readFile(result.outputPath, "utf-8");
+        const parsed = matter(raw);
+        expect(parsed.data.last_verified).toBe("2026-11-04");
+    });
+
+    it("warns and drops an invalid last_verified instead of preserving it", async () => {
+        const content = matter.stringify(WEB_RESEARCHER_BODY, {
+            name: "web-researcher-pro",
+            description: "Performs deep web research with source credibility assessment.",
+            domain: "research",
+            last_verified: "2026-13-99",
+        });
+        const p = await writeSkill("web-researcher-pro.md", content);
+        const result = await ingestFile(p, { skillsRoot: tmpDir, dryRun: true });
+        expect(result.frontmatter.last_verified).toBeUndefined();
+        expect(result.warnings.some((w) => w.includes("last_verified"))).toBe(true);
     });
 });
 

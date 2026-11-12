@@ -1,6 +1,6 @@
 {
   "name": "skill-tools",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SKILL.md contract + tooling: schema, security scanner, ingest, validate, review CLIs",
   "type": "module",
   "engines": { "node": ">=20" },

@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { validateSkill } from "./skill-schema.js";
+import { validateSkill, LastVerifiedSchema } from "./skill-schema.js";
 import type { SkillFrontmatter } from "./skill-schema.js";
 import type { IngestedSkill } from "./types.js";
 
@@ -586,6 +586,17 @@ async function buildFrontmatter(
     const requires = preserveRequires(fm, body);
     const version = preserveVersion(fm);
 
+    // Preserve a valid approval date; never invent one for pending ingests.
+    // An invalid date is dropped with a warning so it cannot sail through to output.
+    let lastVerified: string | undefined;
+    if (typeof fm.last_verified === "string") {
+        if (LastVerifiedSchema.safeParse(fm.last_verified).success) {
+            lastVerified = fm.last_verified;
+        } else {
+            warnings.push("last_verified not preserved — must be an ISO date (YYYY-MM-DD)");
+        }
+    }
+
     const frontmatter: SkillFrontmatter = {
         name,
         description,  // empty string if no description found; validation will flag it
@@ -595,6 +606,7 @@ async function buildFrontmatter(
         version,
         source,
         review_status: "pending",
+        ...(lastVerified !== undefined ? { last_verified: lastVerified } : {}),
     };
 
     const validation = validateSkill(frontmatter, body);
