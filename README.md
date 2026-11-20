@@ -67,6 +67,10 @@ import {
 | `source` | `official` \| `curated` \| `community`, default `curated` |
 | `review_status` | `pending` \| `approved` (optional) |
 | `last_verified` | ISO date `YYYY-MM-DD` (real calendar date); **required when `review_status: approved`**, optional otherwise |
+| `deprecated` | boolean (optional); when `true`, `sunset_date` is required |
+| `deprecated_by` | string (optional); the successor skill or id that replaces this one |
+| `supersedes` | string (optional); the previous skill or id this one replaces |
+| `sunset_date` | ISO date `YYYY-MM-DD` (real calendar date); the end of the deprecation window |
 
 The Markdown body must be at least 50 characters.
 

@@ -8,7 +8,7 @@ import {
   ingestSkillDirectory,
   sha256,
   skillExists
-} from "./chunk-ZGGUCPXM.js";
+} from "./chunk-JYVHL76Q.js";
 import {
   LastVerifiedSchema,
   SkillFrontmatterSchema,
@@ -17,7 +17,7 @@ import {
   isValidIsoDate,
   validateNameFolderMatch,
   validateSkill
-} from "./chunk-754DTTSW.js";
+} from "./chunk-GEARJTOI.js";
 import {
   EMBEDDING_DIMS,
   generateBM25Embedding

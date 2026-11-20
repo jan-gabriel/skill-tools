@@ -143,6 +143,41 @@ describe("last_verified", () => {
     });
 });
 
+describe("deprecation fields (M2-02)", () => {
+    it("rejects `deprecated: true` without sunset_date", () => {
+        const r = validateSkill({ ...VALID_FM, deprecated: true }, VALID_BODY);
+        expect(r.valid).toBe(false);
+        if (!r.valid) expect(r.errors.join(" ")).toMatch(/sunset_date/);
+    });
+
+    it("accepts `deprecated: true` with a valid sunset_date", () => {
+        const r = validateSkill({ ...VALID_FM, deprecated: true, sunset_date: "2027-01-01" }, VALID_BODY);
+        expect(r.valid).toBe(true);
+    });
+
+    it("accepts deprecated_by and supersedes pointers", () => {
+        const r = validateSkill(
+            { ...VALID_FM, deprecated_by: "devops/new-skill", supersedes: "devops/old-skill" },
+            VALID_BODY,
+        );
+        expect(r.valid).toBe(true);
+        if (r.valid) {
+            expect(r.data.deprecated_by).toBe("devops/new-skill");
+            expect(r.data.supersedes).toBe("devops/old-skill");
+        }
+    });
+
+    it("rejects an invalid sunset_date format", () => {
+        const r = validateSkill({ ...VALID_FM, deprecated: true, sunset_date: "2027/01/01" }, VALID_BODY);
+        expect(r.valid).toBe(false);
+    });
+
+    it("deprecation fields are optional", () => {
+        const r = validateSkill(VALID_FM, VALID_BODY);
+        expect(r.valid).toBe(true);
+    });
+});
+
 describe("validateNameFolderMatch", () => {
     it("returns true when names match exactly", () => {
         expect(validateNameFolderMatch("web-researcher-pro", "web-researcher-pro")).toBe(true);

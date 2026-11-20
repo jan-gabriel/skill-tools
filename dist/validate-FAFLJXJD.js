@@ -2,7 +2,7 @@
 import {
   validateNameFolderMatch,
   validateSkill
-} from "./chunk-754DTTSW.js";
+} from "./chunk-GEARJTOI.js";
 import {
   classifyTier,
   scanSecurityFiles

@@ -24,13 +24,25 @@ var SkillFrontmatterSchema = z.object({
   version: z.string().regex(SEMVER_RE, "version must be semver (e.g. 0.1.0)").default("0.1.0"),
   source: SkillSourceSchema.default("curated"),
   review_status: z.enum(["pending", "approved"]).optional(),
-  last_verified: LastVerifiedSchema.optional()
+  last_verified: LastVerifiedSchema.optional(),
+  /** Lifecycle (M2-02): deprecation pointers and the sunset window. */
+  deprecated: z.boolean().optional(),
+  deprecated_by: z.string().min(1).optional(),
+  supersedes: z.string().min(1).optional(),
+  sunset_date: LastVerifiedSchema.optional()
 }).superRefine((fm, ctx) => {
   if (fm.review_status === "approved" && fm.last_verified === void 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["last_verified"],
       message: "last_verified (ISO date) is required when review_status is approved"
+    });
+  }
+  if (fm.deprecated === true && fm.sunset_date === void 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["sunset_date"],
+      message: "sunset_date (ISO date) is required when deprecated is true"
     });
   }
 });

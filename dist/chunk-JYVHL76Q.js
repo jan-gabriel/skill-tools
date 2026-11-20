@@ -1,7 +1,8 @@
 import {
   LastVerifiedSchema,
+  isValidIsoDate,
   validateSkill
-} from "./chunk-754DTTSW.js";
+} from "./chunk-GEARJTOI.js";
 
 // src/ingest.ts
 import matter from "gray-matter";
@@ -532,7 +533,12 @@ async function buildFrontmatter(filePath, fm, body, source, sourceFolder) {
     version,
     source,
     review_status: "pending",
-    ...lastVerified !== void 0 ? { last_verified: lastVerified } : {}
+    ...lastVerified !== void 0 ? { last_verified: lastVerified } : {},
+    // Lifecycle (M2-02): carry deprecation pointers when the source declares them.
+    ...fm.deprecated === true ? { deprecated: true } : {},
+    ...typeof fm.deprecated_by === "string" && fm.deprecated_by.trim() ? { deprecated_by: fm.deprecated_by.trim() } : {},
+    ...typeof fm.supersedes === "string" && fm.supersedes.trim() ? { supersedes: fm.supersedes.trim() } : {},
+    ...typeof fm.sunset_date === "string" && isValidIsoDate(fm.sunset_date) ? { sunset_date: fm.sunset_date } : {}
   };
   const validation = validateSkill(frontmatter, body);
   if (!validation.valid) {

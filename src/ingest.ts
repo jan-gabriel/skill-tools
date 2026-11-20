@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { validateSkill, LastVerifiedSchema } from "./skill-schema.js";
+import { validateSkill, LastVerifiedSchema, isValidIsoDate } from "./skill-schema.js";
 import type { SkillFrontmatter } from "./skill-schema.js";
 import type { IngestedSkill } from "./types.js";
 
@@ -607,6 +607,11 @@ async function buildFrontmatter(
         source,
         review_status: "pending",
         ...(lastVerified !== undefined ? { last_verified: lastVerified } : {}),
+        // Lifecycle (M2-02): carry deprecation pointers when the source declares them.
+        ...(fm.deprecated === true ? { deprecated: true } : {}),
+        ...(typeof fm.deprecated_by === "string" && fm.deprecated_by.trim() ? { deprecated_by: fm.deprecated_by.trim() } : {}),
+        ...(typeof fm.supersedes === "string" && fm.supersedes.trim() ? { supersedes: fm.supersedes.trim() } : {}),
+        ...(typeof fm.sunset_date === "string" && isValidIsoDate(fm.sunset_date) ? { sunset_date: fm.sunset_date } : {}),
     };
 
     const validation = validateSkill(frontmatter, body);

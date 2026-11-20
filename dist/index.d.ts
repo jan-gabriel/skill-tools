@@ -32,6 +32,10 @@ declare const SkillFrontmatterSchema: z.ZodObject<{
         approved: "approved";
     }>>;
     last_verified: z.ZodOptional<z.ZodString>;
+    deprecated: z.ZodOptional<z.ZodBoolean>;
+    deprecated_by: z.ZodOptional<z.ZodString>;
+    supersedes: z.ZodOptional<z.ZodString>;
+    sunset_date: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 type SkillFrontmatter = z.infer<typeof SkillFrontmatterSchema>;
 type SkillRequires = z.infer<typeof SkillRequiresSchema>;
